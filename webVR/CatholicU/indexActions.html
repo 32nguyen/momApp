@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="utf-8" />
+    <title>Babylon - Getting Started</title>
+    <!--- link to the last version of babylon --->
+    <script src="babylon.max.js"></script>
+    <!--<script src="babylon.glTFFileLoader.js"></script>-->
+    <script src="babylonjs.loaders.js"></script>
+    <script src="babylon.inspector.bundle.js"></script>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            // get the canvas DOM element
+            var canvas = document.getElementById('renderCanvas');
+
+            // load the 3D engine
+            var engine = new BABYLON.Engine(canvas, true);
+
+            // createScene function that creates and return the scene
+            var createScene = function () {
+                // create a basic BJS Scene object
+                var scene = new BABYLON.Scene(engine);
+
+                // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+                var camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(0, 5, -10), scene);
+
+                // Async call
+                BABYLON.SceneLoader.Append("scenes/sponza/",
+                    "sponza.babylon", scene, function () {
+                        var light = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene);
+                        // Our built-in 'ground' shape. Params: name, width, depth, subdivs, scene
+                        var plan = BABYLON.Mesh.CreatePlane("plane", 2.0, scene);
+                        plan.position.x = -9;
+                        plan.position.y = 1;
+                        plan.position.z = 0.5;
+                        plan.rotation.y = Math.PI / 2;
+
+                        var planMaterial = new BABYLON.StandardMaterial("planTexture", scene);
+                        planMaterial.diffuseTexture = new BABYLON.Texture("images/Franciscus_in_2015.jpg", scene);
+                        planMaterial.backFaceCulling = false;
+                        plan.material = planMaterial;
+
+                        var sound = new BABYLON.Sound("sound", "scenes/Sponza/Thunder_1.mp3", scene);
+
+                        // We will add some logic there
+                        // Initialize VR
+                        var VRHelper = scene.createDefaultVRExperience();
+                        
+                        scene.debugLayer.show();
+
+                        plan.actionManager = new BABYLON.ActionManager(scene);
+
+                        plan.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickDownTrigger, function (ev) {
+                            sound.play();
+                        }));
+
+                        plan.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOutTrigger, plan, "scaling", new BABYLON.Vector3(1, 1, 1), 150));
+                        plan.actionManager.registerAction(new BABYLON.InterpolateValueAction(BABYLON.ActionManager.OnPointerOverTrigger, plan, "scaling", new BABYLON.Vector3(1.1, 1.1, 1.1), 150));
+
+                        // Interation and teleportation
+                        VRHelper.enableTeleportation({ floorMeshName: "Sponza Floor" });
+                    });
+                // return the created scene
+                return scene;
+            }
+
+            // call the createScene function
+            var scene = createScene();
+
+            // run the render loop
+            engine.runRenderLoop(function () {
+                scene.render();
+            });
+
+            // the canvas/window resize event handler
+            window.addEventListener('resize', function () {
+                engine.resize();
+            });
+        });
+    </script>
+</body>
+</html>
