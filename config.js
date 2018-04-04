@@ -1,8 +1,8 @@
 var config = {
   // Watson Conversation Service Credentials
-    workspace_id: "27d222eb-50ef-48f7-aad0-5916fdecb71b",
-    conversation_username: "4fabef96-3607-43ba-a397-e364dd782131",
-    conversation_password: "fGrMwKy0PIyQ",
+    workspace_id: "84a2e041-0d0d-4b30-a364-5410fcc0368f",
+    conversation_username: "6bd947e0-0cdd-4b81-b7f5-f1e941a7035d",
+    conversation_password: "uU1Gpui1fMeR",
 
   // Watson Speech-To-Text Service Credentials
     STT_username: "0ebe57dc-0e47-49f8-b164-d11eb00495c7",

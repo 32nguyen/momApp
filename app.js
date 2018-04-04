@@ -27,6 +27,13 @@ app.get('/synthesize', (req, res, next) => {
   transcript.pipe(res);
 });
 
+// my free number is 1(410) 204-2169
+var twilio = require('twilio');
+
+// Find your account sid and auth token in your Twilio account Console.
+var client = new twilio('ACaf51e5cf6eb7cbe792ae1d86f30dbedd', '5842512a127539c71aa57d49b68d8141');
+
+
 var io = require('socket.io')(server);
 var ss = require('socket.io-stream');
 io.on('connection', function (socket) {
@@ -38,15 +45,37 @@ io.on('connection', function (socket) {
       if(!err){
           console.log(res);
           context = res.context;
-          if (res.output.action === 'display_time') {
+          if (res.output.action === 'VR_selection') {
             // User asked what time it is, so we output the local system time.
-            console.log('The current time is ' + new Date().toLocaleTimeString());
+            console.log("1");
             opn('http://mombisonhacks.azurewebsites.net/');
-          } else if (res.output.action === 'end_conversation') {
+          } else if (res.output.action === 'end') {
             // User said goodbye, so we're done.
               console.log(res.output.text[0]);
-            endConversation = true;
-        } else {
+              endConversation = true;
+        } else if (res.output.action === 'message1' ) {
+          client.messages.create({
+          to: '+14438086169',
+          from: '+14102042169',
+          body: 'Your wife that she want to die. Please support her.'
+          });
+        } else if (res.output.action === 'message2'){
+          client.messages.create({
+          to: '+14438086169',
+          from: '+14102042169',
+          body: 'Your wife has not have good sleeps recently. You should take care for her'
+          });
+        } else if (res.output.action === 'mapbox') {
+          opn('file:///Users/jason/Desktop/MomBot/MapBox/Mapbox.html');
+        } else if (res.output.action === 'playing_music'){
+          if ("genes" === "Mozalt"){
+          	opn('http://open.spotify.com/album/003UMPoJ8dQHS6J9wS2FrX');
+          }
+          else{
+          	opn('http://open.spotify.com/album/0OzOn0BZANmXkpBatSrpJf');
+          }
+        }
+        else {
             // Display the output from dialog, if any.
               if (res.output.text.length != 0) {
                 console.log(res.output.text[0]);
